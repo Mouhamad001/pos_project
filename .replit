@@ -1,24 +1,34 @@
+# Use Nix to define a reproducible environment
+[nix]
+channel = "stable-23_11"
+
+# Specify the exact packages we need. Replit will install these first.
+[nix.packages]
+python3 = "pkgs.python311"
+nodejs = "pkgs.nodejs-18_x"
+
 language = "bash"
 
-# This single `run` command will be executed when you press the "Run" button.
-# It performs all necessary steps: installs dependencies, initializes the database,
-# builds the frontend, and finally starts the server.
+# This command will run after the Nix environment is set up.
 run = """
 set -e
 
 echo "--- Installing backend dependencies ---"
-python -m pip install -r backend/requirements.txt
+# Use python3, which is now guaranteed to exist from Nix.
+python3 -m pip install -r backend/requirements.txt
 
-echo "--- Initializing database (this will fix the login error) ---"
-python backend/init_db.py
+echo "--- Initializing database ---"
+python3 backend/init_db.py
 
 echo "--- Installing frontend dependencies ---"
+# npm comes from the nodejs package.
 (cd frontend && npm install)
 
 echo "--- Building frontend ---"
 (cd frontend && npm run build)
 
 echo "--- Starting backend server ---"
+# Use uvicorn installed by pip. It should be in the path.
 (cd backend && uvicorn main:app --host 0.0.0.0 --port 8000)
 """
 
