@@ -7,10 +7,10 @@ run = """
 set -e
 
 echo "--- Installing backend dependencies ---"
-python3 -m pip install -r backend/requirements.txt
+python -m pip install -r backend/requirements.txt
 
 echo "--- Initializing database (this will fix the login error) ---"
-python3 backend/init_db.py
+python backend/init_db.py
 
 echo "--- Installing frontend dependencies ---"
 (cd frontend && npm install)
@@ -25,4 +25,4 @@ echo "--- Starting backend server ---"
 # The [deployment] section is for when you use Replit's formal deployment feature.
 [deployment]
 run = ["sh", "-c", "cd backend && uvicorn main:app --host 0.0.0.0 --port 8000"]
-build = ["sh", "-c", "python3 -m pip install -r backend/requirements.txt && python3 backend/init_db.py && cd frontend && npm install && npm run build"] 
+build = ["sh", "-c", "python -m pip install -r backend/requirements.txt && python backend/init_db.py && cd frontend && npm install && npm run build"] 
