@@ -3,5 +3,8 @@
     "@date-io/date-fns": "^3.2.1",
     "@mui/x-date-pickers": "^8.5.1",
     "date-fns": "^4.1.0"
+  },
+  "devDependencies": {
+    "gh-pages": "^6.3.0"
   }
 }

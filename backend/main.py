@@ -1,11 +1,13 @@
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, FileResponse
 from typing import Dict
 from fastapi.exceptions import RequestValidationError
 from starlette.exceptions import HTTPException
 from database import init_db
 from routers import auth, products, customers, sales, invoices, reports
+from fastapi.staticfiles import StaticFiles
+import os
 
 app = FastAPI(
     title="POS System API",
@@ -44,6 +46,22 @@ app.include_router(customers.router, prefix="/customers", tags=["Customers"])
 app.include_router(sales.router, prefix="/sales", tags=["Sales"])
 app.include_router(invoices.router, prefix="/invoices", tags=["Invoices"])
 app.include_router(reports.router, prefix="/reports", tags=["Reports"])
+
+# Serve Frontend
+STATIC_FILES_DIR = os.path.join(os.path.dirname(__file__), "..", "frontend", "build")
+
+app.mount(
+    "/static",
+    StaticFiles(directory=os.path.join(STATIC_FILES_DIR, "static")),
+    name="static"
+)
+
+@app.get("/{full_path:path}")
+async def serve_react_app(full_path: str):
+    index_path = os.path.join(STATIC_FILES_DIR, "index.html")
+    if os.path.exists(index_path):
+        return FileResponse(index_path)
+    return {"message": "Frontend not built. Run `npm run build` in the frontend directory."}
 
 @app.get("/health")
 async def health_check():
