@@ -1,10 +1,10 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session, joinedload
 from typing import List, Any
-from database import get_db
-import models
-import schemas
-from auth import get_current_user
+from ..database import get_db
+from .. import models
+from .. import schemas
+from ..auth import get_current_active_user
 from decimal import Decimal
 import uuid
 from datetime import datetime
@@ -19,7 +19,7 @@ def get_invoices(
     skip: int = 0,
     limit: int = 100,
     db: Session = Depends(get_db),
-    current_user: models.User = Depends(get_current_user)
+    current_user: models.User = Depends(get_current_active_user)
 ):
     try:
         invoices = db.query(models.Invoice).options(
@@ -38,7 +38,7 @@ def get_invoices(
 def create_invoice(
     invoice: schemas.InvoiceCreate,
     db: Session = Depends(get_db),
-    current_user: models.User = Depends(get_current_user)
+    current_user: models.User = Depends(get_current_active_user)
 ):
     try:
         # Validate sale exists
@@ -126,7 +126,7 @@ def create_invoice(
 def get_invoice(
     invoice_id: int,
     db: Session = Depends(get_db),
-    current_user: models.User = Depends(get_current_user)
+    current_user: models.User = Depends(get_current_active_user)
 ):
     try:
         invoice = db.query(models.Invoice).options(
@@ -154,7 +154,7 @@ def update_invoice_status(
     invoice_id: int,
     status: str,
     db: Session = Depends(get_db),
-    current_user: models.User = Depends(get_current_user)
+    current_user: models.User = Depends(get_current_active_user)
 ):
     try:
         invoice = db.query(models.Invoice).filter(models.Invoice.id == invoice_id).first()

@@ -212,9 +212,11 @@ const Sales: React.FC = () => {
 
   const handleItemChange = (index: number, field: 'product_id' | 'quantity', value: string | number) => {
     const newItems = [...(currentSale.items || [])];
+    const newQuantity = field === 'quantity' ? parseInt(String(value), 10) : newItems[index].quantity;
+
     newItems[index] = {
       ...newItems[index],
-      [field]: field === 'product_id' ? Number(value) : value,
+      [field]: field === 'product_id' ? Number(value) : newQuantity,
       product: field === 'product_id' ? products.find(p => p.id === Number(value)) : newItems[index].product,
     };
     setCurrentSale({
@@ -234,7 +236,7 @@ const Sales: React.FC = () => {
         await api.delete(`/sales/${saleToDelete}`);
         setSuccess('Sale deleted successfully!');
         fetchSales();
-      } catch (err: any) {
+      } catch (err: unknown) {
         console.error('Error deleting sale:', err);
         setError('Failed to delete sale.');
       } finally {

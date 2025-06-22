@@ -55,9 +55,7 @@ const App: React.FC = () => {
     <ThemeProvider theme={theme}>
       <LocalizationProvider dateAdapter={AdapterDateFns}>
         <AuthProvider>
-          <>
-            <AppRoutes />
-          </>
+          <AppRoutes />
         </AuthProvider>
       </LocalizationProvider>
     </ThemeProvider>

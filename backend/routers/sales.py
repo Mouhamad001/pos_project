@@ -1,12 +1,12 @@
 from fastapi import APIRouter, Depends, HTTPException, status, Query
 from sqlalchemy.orm import Session, joinedload
 from typing import List, Any, Optional
-from database import get_db
-import models
-import schemas
-from auth import get_current_user
+from ..database import get_db
+from .. import models
+from .. import schemas
+from ..auth import get_current_active_user
 from decimal import Decimal
-from utils.export import export_sales_to_csv
+from ..utils.export import export_sales_to_csv
 from datetime import datetime
 from fastapi.responses import StreamingResponse
 from io import StringIO
@@ -19,7 +19,7 @@ def get_sales(
     limit: int = 100,
     filters: schemas.SalesFilterParams = Depends(),
     db: Session = Depends(get_db),
-    current_user: models.User = Depends(get_current_user)
+    current_user: models.User = Depends(get_current_active_user)
 ):
     try:
         query = db.query(models.Sale).options(
@@ -47,7 +47,7 @@ def get_sales(
 def create_sale(
     sale: schemas.SaleCreate,
     db: Session = Depends(get_db),
-    current_user: models.User = Depends(get_current_user)
+    current_user: models.User = Depends(get_current_active_user)
 ):
     try:
         # Validate customer exists if provided
@@ -128,7 +128,7 @@ def create_sale(
 def get_sale(
     sale_id: int,
     db: Session = Depends(get_db),
-    current_user: models.User = Depends(get_current_user)
+    current_user: models.User = Depends(get_current_active_user)
 ):
     try:
         sale = db.query(models.Sale).filter(models.Sale.id == sale_id).first()
@@ -150,7 +150,7 @@ def get_sale(
 def delete_sale(
     sale_id: int,
     db: Session = Depends(get_db),
-    current_user: models.User = Depends(get_current_user)
+    current_user: models.User = Depends(get_current_active_user)
 ):
     try:
         sale = db.query(models.Sale).filter(models.Sale.id == sale_id).first()
@@ -182,7 +182,7 @@ def update_sale_status(
     sale_id: int,
     status: str,
     db: Session = Depends(get_db),
-    current_user: models.User = Depends(get_current_user)
+    current_user: models.User = Depends(get_current_active_user)
 ) -> Any:
     db_sale = db.query(models.Sale).filter(models.Sale.id == sale_id).first()
     if db_sale is None:
@@ -200,7 +200,7 @@ def update_sale_status(
 def export_sales_csv(
     filters: schemas.SalesFilterParams = Depends(),
     db: Session = Depends(get_db),
-    current_user: models.User = Depends(get_current_user)
+    current_user: models.User = Depends(get_current_active_user)
 ):
     try:
         csv_data = export_sales_to_csv(db, filters.start_date, filters.end_date, filters.customer_id, filters.product_id)

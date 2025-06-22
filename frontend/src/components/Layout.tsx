@@ -16,6 +16,7 @@ import {
   Divider,
   Menu,
   MenuItem,
+  ListItemButton,
 } from '@mui/material';
 import {
   Menu as MenuIcon,
@@ -70,8 +71,7 @@ const Layout: React.FC = () => {
       <Divider />
       <List>
         {menuItems.map((item) => (
-          <ListItem
-            button
+          <ListItemButton
             key={item.text}
             onClick={() => {
               navigate(item.path);
@@ -81,7 +81,7 @@ const Layout: React.FC = () => {
           >
             <ListItemIcon>{item.icon}</ListItemIcon>
             <ListItemText primary={item.text} />
-          </ListItem>
+          </ListItemButton>
         ))}
       </List>
     </div>

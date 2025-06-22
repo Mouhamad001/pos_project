@@ -1,10 +1,10 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from typing import List
-from database import get_db
-import models
-import schemas
-from auth import get_current_user
+from ..database import get_db
+from .. import models
+from .. import schemas
+from ..auth import get_current_active_user
 
 router = APIRouter()
 
@@ -13,7 +13,7 @@ def get_products(
     skip: int = 0,
     limit: int = 100,
     db: Session = Depends(get_db),
-    current_user: models.User = Depends(get_current_user)
+    current_user: models.User = Depends(get_current_active_user)
 ):
     try:
         products = db.query(models.Product).offset(skip).limit(limit).all()
@@ -28,7 +28,7 @@ def get_products(
 def create_product(
     product: schemas.ProductCreate,
     db: Session = Depends(get_db),
-    current_user: models.User = Depends(get_current_user)
+    current_user: models.User = Depends(get_current_active_user)
 ):
     try:
         # Validate price is positive
@@ -63,7 +63,7 @@ def create_product(
 def get_product(
     product_id: int,
     db: Session = Depends(get_db),
-    current_user: models.User = Depends(get_current_user)
+    current_user: models.User = Depends(get_current_active_user)
 ):
     try:
         product = db.query(models.Product).filter(models.Product.id == product_id).first()
@@ -86,7 +86,7 @@ def update_product(
     product_id: int,
     product: schemas.ProductUpdate,
     db: Session = Depends(get_db),
-    current_user: models.User = Depends(get_current_user)
+    current_user: models.User = Depends(get_current_active_user)
 ):
     try:
         db_product = db.query(models.Product).filter(models.Product.id == product_id).first()
@@ -130,7 +130,7 @@ def update_product(
 def delete_product(
     product_id: int,
     db: Session = Depends(get_db),
-    current_user: models.User = Depends(get_current_user)
+    current_user: models.User = Depends(get_current_active_user)
 ):
     try:
         db_product = db.query(models.Product).filter(models.Product.id == product_id).first()

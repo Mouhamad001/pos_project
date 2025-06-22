@@ -1,9 +1,9 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
-from database import get_db
-from auth import get_current_user
-import models
-from utils.reports import generate_weekly_report, generate_monthly_report, get_latest_report
+from ..database import get_db
+from ..auth import get_current_active_user
+from .. import models
+from ..utils.reports import generate_weekly_report, generate_monthly_report, get_latest_report
 from datetime import datetime, timedelta
 from fastapi.responses import JSONResponse
 import json
@@ -13,7 +13,7 @@ router = APIRouter()
 @router.get("/weekly")
 def get_weekly_report(
     db: Session = Depends(get_db),
-    current_user: models.User = Depends(get_current_user)
+    current_user: models.User = Depends(get_current_active_user)
 ):
     try:
         report_data = generate_weekly_report(db)
@@ -27,7 +27,7 @@ def get_weekly_report(
 @router.get("/monthly")
 def get_monthly_report(
     db: Session = Depends(get_db),
-    current_user: models.User = Depends(get_current_user)
+    current_user: models.User = Depends(get_current_active_user)
 ):
     try:
         report_data = generate_monthly_report(db)
@@ -43,7 +43,7 @@ def get_latest_report_endpoint(
     report_type: str,
     period: str,
     db: Session = Depends(get_db),
-    current_user: models.User = Depends(get_current_user)
+    current_user: models.User = Depends(get_current_active_user)
 ):
     try:
         report_data = get_latest_report(report_type, period)

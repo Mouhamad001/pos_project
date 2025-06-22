@@ -28,8 +28,8 @@ def create_tables():
     Base.metadata.create_all(bind=engine)
 
 def create_initial_user():
-    from models import User
-    from auth import get_password_hash
+    from .models import User
+    from .auth import get_password_hash
     
     db = SessionLocal()
     try:
@@ -58,8 +58,8 @@ def init_db():
             print("Tables created.")
 
         # Create admin user if it doesn't exist
-        from models import User
-        from auth import get_password_hash
+        from .models import User
+        from .auth import get_password_hash
         admin = db.query(User).filter(User.username == "admin").first()
         if not admin:
             print("Creating admin user...")

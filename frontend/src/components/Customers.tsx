@@ -54,7 +54,7 @@ const Customers: React.FC = () => {
       const response = await api.get('/customers/');
       setCustomers(response.data);
       setError(null); // Clear previous errors on successful fetch
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('Error fetching customers:', error);
       setError('Failed to fetch customers. Please try again.');
     } finally {
@@ -120,9 +120,9 @@ const Customers: React.FC = () => {
         setLoading(true);
         await api.delete(`/customers/${id}`);
         fetchCustomers();
-      } catch (error: any) {
+      } catch (error: unknown) {
         console.error('Error deleting customer:', error);
-        setError(error.response?.data?.detail || 'Failed to delete customer. Please try again.');
+        setError('Failed to delete customer. Please try again.');
       } finally {
         setLoading(false);
       }
@@ -186,10 +186,10 @@ const Customers: React.FC = () => {
                 <TableCell>{customer.phone}</TableCell>
                 <TableCell>{customer.address}</TableCell>
                 <TableCell>
-                  <IconButton onClick={() => handleOpen(customer)}>
+                  <IconButton onClick={() => handleOpen(customer)} disabled={loading}>
                     <EditIcon />
                   </IconButton>
-                  <IconButton onClick={() => handleDelete(customer.id)}>
+                  <IconButton onClick={() => handleDelete(customer.id)} disabled={loading}>
                     <DeleteIcon />
                   </IconButton>
                 </TableCell>

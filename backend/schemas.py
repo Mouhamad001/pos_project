@@ -128,6 +128,7 @@ class Sale(SaleBase):
     id: int
     user_id: int
     total_amount: Decimal
+    status: str
     created_at: datetime
     updated_at: Optional[datetime] = None
     items: List[SaleItem]

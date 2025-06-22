@@ -92,7 +92,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const response = await api.get('/auth/users/me');
       setUser(response.data);
       setIsAuthenticated(true);
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('Error fetching user:', error);
       logout();
     }

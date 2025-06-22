@@ -1,7 +1,7 @@
 from sqlalchemy import Column, Integer, String, Float, ForeignKey, DateTime, Boolean, Table
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
-from database import Base
+from .database import Base
 
 class User(Base):
     __tablename__ = "users"
@@ -14,6 +14,9 @@ class User(Base):
     is_admin = Column(Boolean, default=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
+
+    sales = relationship("Sale", back_populates="user")
+    invoices = relationship("Invoice", back_populates="user")
 
 class Product(Base):
     __tablename__ = "products"
@@ -28,6 +31,7 @@ class Product(Base):
 
     # Relationships
     sale_items = relationship("SaleItem", back_populates="product")
+    invoice_items = relationship("InvoiceItem", back_populates="product")
 
 class Customer(Base):
     __tablename__ = "customers"
@@ -42,6 +46,7 @@ class Customer(Base):
 
     # Relationships
     sales = relationship("Sale", back_populates="customer")
+    invoices = relationship("Invoice", back_populates="customer")
 
 class Sale(Base):
     __tablename__ = "sales"
@@ -50,13 +55,15 @@ class Sale(Base):
     customer_id = Column(Integer, ForeignKey("customers.id"))
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
     total_amount = Column(Float, nullable=False)
+    status = Column(String, default="completed") # completed, pending, cancelled
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
 
     # Relationships
     customer = relationship("Customer", back_populates="sales")
-    user = relationship("User")
+    user = relationship("User", back_populates="sales")
     items = relationship("SaleItem", back_populates="sale", cascade="all, delete-orphan")
+    invoices = relationship("Invoice", back_populates="sale")
 
 class SaleItem(Base):
     __tablename__ = "sale_items"
@@ -90,9 +97,9 @@ class Invoice(Base):
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
 
     # Relationships
-    sale = relationship("Sale")
-    customer = relationship("Customer")
-    user = relationship("User")
+    sale = relationship("Sale", back_populates="invoices")
+    customer = relationship("Customer", back_populates="invoices")
+    user = relationship("User", back_populates="invoices")
     items = relationship("InvoiceItem", back_populates="invoice", cascade="all, delete-orphan")
 
 class InvoiceItem(Base):
@@ -108,4 +115,4 @@ class InvoiceItem(Base):
 
     # Relationships
     invoice = relationship("Invoice", back_populates="items")
-    product = relationship("Product") 
+    product = relationship("Product", back_populates="invoice_items") 

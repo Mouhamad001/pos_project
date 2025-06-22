@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 from sqlalchemy import func
 from sqlalchemy.orm import Session
-import models
+from .. import models
 from typing import Dict, Any, List
 import json
 import os

@@ -70,7 +70,7 @@ const Dashboard: React.FC = () => {
           });
         });
         setSalesByProduct(Object.values(productMap).sort((a, b) => b.quantity - a.quantity));
-      } catch (error) {
+      } catch (error: unknown) {
         console.error('Error fetching dashboard stats:', error);
       }
     };

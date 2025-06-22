@@ -3,7 +3,7 @@ from io import StringIO
 from typing import List, Dict, Any, Optional
 from datetime import datetime
 from sqlalchemy.orm import Session
-import models
+from .. import models
 
 def export_to_csv(data: List[Dict[str, Any]], headers: List[str]) -> str:
     output = StringIO()

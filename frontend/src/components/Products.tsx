@@ -53,7 +53,7 @@ const Products: React.FC = () => {
       setLoading(true);
       const response = await api.get('/products/');
       setProducts(response.data);
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('Error fetching products:', error);
       setError('Failed to fetch products. Please try again.');
     } finally {
@@ -94,7 +94,7 @@ const Products: React.FC = () => {
   };
 
   const validateForm = () => {
-    if (!(formData.name || '').trim()) {
+    if (!formData.name.trim()) {
       setError('Name is required');
       return false;
     }
@@ -129,7 +129,7 @@ const Products: React.FC = () => {
 
       handleClose();
       fetchProducts();
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('Error saving product:', error);
       setError('Failed to save product. Please try again.');
     } finally {
@@ -143,7 +143,7 @@ const Products: React.FC = () => {
         setLoading(true);
         await api.delete(`/products/${id}`);
         fetchProducts();
-      } catch (error) {
+      } catch (error: unknown) {
         console.error('Error deleting product:', error);
         setError('Failed to delete product. Please try again.');
       } finally {
